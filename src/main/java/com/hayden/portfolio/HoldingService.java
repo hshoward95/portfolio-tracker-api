@@ -1,5 +1,6 @@
 package com.hayden.portfolio;
 
+import java.util.Optional;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,11 @@ public class HoldingService {
     }
 
     public Holding getById(Long id) {
-        return repository.findById(id).orElseThrow(() -> new HoldingNotFoundException(id));
+        Optional<Holding> result = repository.findById(id);
+        if (result.isEmpty()) {
+            throw new HoldingNotFoundException(id);
+        }
+        return result.get();
     }
 
     public Holding create(Holding holding) {

@@ -24,7 +24,7 @@ class HoldingControllerTest {
     }
 
     @Test
-    void createHolding_validInput_returns201AndSavedHolding() throws Exception {
+    void testCreate() throws Exception {
         mockMvc.perform(post("/api/holdings").contentType(MediaType.APPLICATION_JSON).content("{\"symbol\":\"AAPL\",\"shares\":10,\"costPerShare\":150.25}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.symbol").value("AAPL"))
@@ -32,28 +32,28 @@ class HoldingControllerTest {
     }
 
     @Test
-    void createHolding_blankSymbol_returns400() throws Exception {
+    void testBlankSymbol() throws Exception {
         mockMvc.perform(post("/api/holdings").contentType(MediaType.APPLICATION_JSON).content("{\"symbol\":\"\",\"shares\":10,\"costPerShare\":150.25}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.symbol").exists());
     }
 
     @Test
-    void createHolding_negativeShares_returns400() throws Exception {
+    void testNegativeShares() throws Exception {
         mockMvc.perform(post("/api/holdings").contentType(MediaType.APPLICATION_JSON).content("{\"symbol\":\"AAPL\",\"shares\":-5,\"costPerShare\":150.25}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.shares").exists());
     }
 
     @Test
-    void getHolding_missingId_returns404() throws Exception {
+    void testNotFound() throws Exception {
         mockMvc.perform(get("/api/holdings/9999"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("No holding with id 9999"));
     }
 
     @Test
-    void summary_afterTwoHoldings_addsThemUp() throws Exception {
+    void testSummary() throws Exception {
         createHolding("{\"symbol\":\"AAPL\",\"shares\":10,\"costPerShare\":150.25}");
         createHolding("{\"symbol\":\"MSFT\",\"shares\":2,\"costPerShare\":300.00}");
         mockMvc.perform(get("/api/portfolio/summary"))

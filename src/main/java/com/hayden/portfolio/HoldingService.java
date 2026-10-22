@@ -51,7 +51,12 @@ public class HoldingService {
         for (Holding holding : holdings) {
             BigDecimal cost = holding.getCostPerShare().multiply(BigDecimal.valueOf(holding.getShares()));
             total = total.add(cost);
-            bySymbol.merge(holding.getSymbol(), cost, BigDecimal::add);
+            BigDecimal oldTotal = bySymbol.get(holding.getSymbol());
+            if (oldTotal == null) {
+                bySymbol.put(holding.getSymbol(), cost);
+            } else {
+                bySymbol.put(holding.getSymbol(), oldTotal.add(cost));
+            }
         }
         return new PortfolioSummary(holdings.size(), total, bySymbol);
     }

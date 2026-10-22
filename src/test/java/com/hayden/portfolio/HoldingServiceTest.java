@@ -32,13 +32,13 @@ class HoldingServiceTest {
     }
 
     @Test
-    void getById_missingId_throwsNotFound() {
+    void testGetByIdMissing() {
         when(repository.findById(99L)).thenReturn(Optional.empty());
         assertThrows(HoldingNotFoundException.class, () -> service.getById(99L));
     }
 
     @Test
-    void getById_existingId_returnsHolding() {
+    void testGetByIdFound() {
         Holding apple = makeHolding("AAPL", 10, "150.25");
         when(repository.findById(1L)).thenReturn(Optional.of(apple));
         Holding result = service.getById(1L);
@@ -46,7 +46,7 @@ class HoldingServiceTest {
     }
 
     @Test
-    void getSummary_addsUpCostsPerSymbol() {
+    void testGetSummary() {
         List<Holding> holdings = List.of(makeHolding("AAPL", 10, "150.25"), makeHolding("AAPL", 5, "160.00"), makeHolding("MSFT", 2, "300.00"));
         when(repository.findAll()).thenReturn(holdings);
         PortfolioSummary summary = service.getSummary();
